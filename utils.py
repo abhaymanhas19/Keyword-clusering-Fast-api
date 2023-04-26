@@ -124,7 +124,7 @@ class ProcessKeywords:
                     "volume": volume_list
                 }   
         out_df=pd.DataFrame(data)
-        out_df.to_csv('output.csv')
+        out_df.to_csv('output.csv',index=False)
       
 
     def process_keywords(self):

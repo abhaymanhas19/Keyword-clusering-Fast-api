@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">HTMLResponse
+<html lang="en">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- mobile metas -->
@@ -7,24 +7,59 @@
 <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 	<title>keyword Clustering</title>
+	<style>
+		body {
+			background-color: rgb(2, 44, 71);
+		}
+		.button { 
+			font-weight:bold;
+			box-shadow:3px 3px 5px ;
+			
+			padding:10px;
+			border:1px black inset;
+			border-radius: 10px;
+			margin-top: 30px;
+
+		}
+		.button:hover{
+			color:darkgreen
+		}
+		h1 {
+			text-align: center;
+			color:white
+		
+		}
+		.upload {
+			
+			text-align: center;
+			padding:50px;
+			font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+			background-color: rgb(4, 74, 117);
+			border: 1px  rgb(2, 27, 82) solid;
+			border-radius: 20px;
+			box-shadow: 1px 1px 5px;
+		}
+		.upload #myfile {
+			font-size:18px;
+			color:white
+		}
+
+	</style>
 
 <body>
+
+	<h1> KEYWORD CLUSTERING</h1>
+
 	<form action="/upload" method='post' enctype="multipart/form-data">
-		<div style="text-align: center;border:2px black dotted; padding:50px;background-color: rgb(46, 177, 105);">
-		<label for="myfile">select a file </label>
+		<div class="upload">
+		<label for="myfile" ></label>
 		<input type="file" id="myfile", name="myfile">
 		</div>
 	<center>
-		<button type="submit" style="margin-top: 10px;"> Upload</button>
+		<button type="submit"  class="button"> Upload</button>
 	</center>  
 	</form>
 
-	<div>
-
-		{% for c in csv_data %}
-		{{c}}
-		{% endfor %}
-</div>
 </body>
 </html>
 	
