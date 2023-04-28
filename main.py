@@ -5,24 +5,31 @@ from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI,Depends,status ,responses,Response
 import pandas as pd
 from utils import ProcessKeywords
+from middleware import sizemiddleware
 
 templates = Jinja2Templates(directory="templates")
 
 app = FastAPI()
+
+# app.add_middleware(sizemiddleware)
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
   return templates.TemplateResponse("index.html", {"request": request})
+
+# size_middleware=sizemiddleware(app)
+
 
 @app.post("/upload/")
 async def upload_csv(myfile: UploadFile = File(...)):
     try:
       # csvReader = csv.DictReader(codecs.iterdecode(myfile.file, 'utf-8'))
-      df = pd.read_csv(myfile.file)
-      keywords_set = df[['Keyword','Search volume']]
-      process_keywords = ProcessKeywords(keywords_set=keywords_set, pivot =4)
-      process_keywords.process_keywords()  
-      return FileResponse("output.csv")
-    
+        df = pd.read_csv(myfile.file)
+        keywords_set = df[['Keyword','Search volume']]
+        process_keywords = ProcessKeywords(keywords_set=keywords_set, pivot =2)
+        process_keywords.process_keywords()  
+        return FileResponse("output.csv")
+      
     except Exception as e:
       return {"status": "error", "message": str(e)}
 

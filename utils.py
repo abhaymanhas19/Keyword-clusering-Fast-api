@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from pprint import pprint
+import csv
 
 
 class ProcessKeywords:
@@ -47,8 +48,8 @@ class ProcessKeywords:
     "https://www.si.com/showcase/nutrition/best-zinc-supplement",
     "https://www.cnet.com/health/nutrition/best-zinc-supplements/",
     "https://www.medicalnewstoday.com/articles/best-zinc-supplement",
-    "https://www.forbes.com/health/body/best-zinc-supplements/",
-    "https://www.verywellhealth.com/best-zinc-supplements-4688864",
+    "https://www.livescience.com/best-magnesium-supplement",
+    "https://www.active.com/nutrition/articles/best-magnesium-supplement",
     "https://www.healthline.com/nutrition/best-zinc-supplement",
     "https://www.outlookindia.com/outlook-spotlight/best-zinc-supplements-2023-top-5-zinc-supplements-gummies-for-testosterone-immune-system-acne-news-255454",
     "https://www.outlookindia.com/outlook-spotlight/10-best-zinc-supplements-on-the-market-news-257373",
@@ -65,7 +66,8 @@ class ProcessKeywords:
     "https://www.livescience.com/best-magnesium-supplement",
     "https://www.active.com/nutrition/articles/best-magnesium-supplement",
     "https://thenutritioninsider.com/wellness/best-magnesium-supplements/"
-  ]
+  ],
+ 
 }
         self.clusters = []
         self.pivot = pivot
@@ -91,8 +93,14 @@ class ProcessKeywords:
         self.url_set[keyword] = urls
 
     def _generate_url_set(self):
-        for keyword in self.keywords.Keyword:
-            self._get_url(keyword=keyword)
+        i,j=0,100
+        while i<= len(self.keywords):
+            df=self.keywords.iloc[i:j]
+            for keyword in df.Keyword:
+                self._get_url(keyword=keyword)
+            i,j=j,j+100
+      
+            # self._get_url(keyword=keyword)
         # pprint(self.url_set)
     def _generate_clusters(self):
         clusters=[]
@@ -111,20 +119,41 @@ class ProcessKeywords:
       
 
     def _generate_csv(self):
+        final_cluster=[]
+        
         for cluster in self.clusters:
             df=self.keywords.query(f'Keyword in {list(cluster)}')
-            parent = df.max()
-            keywords_list,volume_list=[],[]
-            for i in df.to_dict(orient='records'):     
-                keywords_list.append(i['Keyword'])   
-                volume_list.append(i['Search volume'])  
-            data = {
-                    "parent_keyword": parent.Keyword,
-                    "keywords":keywords_list,
-                    "volume": volume_list
-                }   
-        out_df=pd.DataFrame(data)
-        out_df.to_csv('output.csv',index=False)
+            parent=df.max()
+            d=df.to_dict()
+            final_cluster.append(d)
+            df=None
+
+      
+
+        # s=str(final_cluster).split(',')
+            # parent = df.max()
+            # keywords_list,volume_list=[],[]
+        with open('output.csv','w') as f:
+            fields_name=['Parent_keyword','Keyword_name','volume'] 
+            csvWriter=csv.DictWriter(f, fieldnames=fields_name)
+            csvWriter.writeheader()
+            for j in final_cluster:
+                csvWriter.writerow({"Parent_keyword":parent.Keyword})
+                for i in pd.DataFrame(j).to_dict(orient='records'):
+                        data={"Keyword_name":i['Keyword'], "volume":i['Search volume']}  
+                        csvWriter.writerow(data)
+                        
+         # keywords_list,volume_list=[],[]
+        #     for i in df.to_dict(orient='records'):
+        #         keywords_list.append(i['Keyword'])   
+        #         volume_list.append(i['Search volume'])  
+        
+        #     data ={
+        #            "parent_keyword":parent.Keyword,
+        #             "keyword":keywords_list ,
+        #             "volume":volume_list }
+        #     out_df=pd.DataFrame(data)
+        # out_df.to_csv('output.csv',index=False)
       
 
     def process_keywords(self):
