@@ -25,10 +25,14 @@ async def upload_csv(myfile: UploadFile = File(...)):
     try:
       # csvReader = csv.DictReader(codecs.iterdecode(myfile.file, 'utf-8'))
         df = pd.read_csv(myfile.file)
-        keywords_set = df[['Keyword','Search volume']]
-        process_keywords = ProcessKeywords(keywords_set=keywords_set, pivot =2)
-        process_keywords.process_keywords()  
-        return FileResponse("output.csv")
+        df.fillna('')
+        if len(df)> 100:
+           return {"Status":"Uploading error", "message":"100 keywords can process at once  " }
+        else:
+          keywords_set = df[['Keyword','Search volume']]
+          process_keywords = ProcessKeywords(keywords_set=keywords_set, pivot =4)
+          process_keywords.process_keywords()  
+          return FileResponse("output.csv")
       
     except Exception as e:
       return {"status": "error", "message": str(e)}
@@ -42,4 +46,3 @@ async def upload_csv(myfile: UploadFile = File(...)):
       #    new_row={"keywords_names":row["Keyword"],
       #             "Volume":row["Volume"]}
       #    csvWriter.writerow(new_row)
-        # file=shutil.copyfileobj('newcsv.csv','Modified file')
